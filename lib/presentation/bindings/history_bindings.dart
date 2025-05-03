@@ -1,22 +1,23 @@
-import 'package:ai_exercise_tracker/data/repositories/exercise_repo_impl.dart';
-import 'package:ai_exercise_tracker/domain/usecases/exercise/get_exercise_history_usecase.dart';
+// lib/presentation/bindings/history_binding.dart
+import 'package:ai_exercise_tracker/domain/usecases/exercise/get_total_rep_per_type_usecase.dart';
+import 'package:ai_exercise_tracker/presentation/controller/auth_controller.dart';
 import 'package:ai_exercise_tracker/presentation/controller/history_controller.dart';
 import 'package:get/get.dart';
 
+import '../../domain/usecases/exercise/get_exercise_history_usecase.dart';
 
 
 class HistoryBinding extends Bindings {
   @override
   void dependencies() {
-    // Use cases
+    // Use cases - menggunakan repository yang sudah ada
     Get.lazyPut<GetExerciseHistoryUseCase>(
-      () => GetExerciseHistoryUseCase(Get.find<ExerciseRepositoryImpl>()),
+      () => GetExerciseHistoryUseCase(Get.find()),
       fenix: true,
     );
 
     Get.lazyPut<GetTotalRepetitionsPerTypeUseCase>(
-      () =>
-          GetTotalRepetitionsPerTypeUseCase(Get.find<ExerciseRepositoryImpl>()),
+      () => GetTotalRepetitionsPerTypeUseCase(Get.find()),
       fenix: true,
     );
 
@@ -28,7 +29,7 @@ class HistoryBinding extends Bindings {
       return HistoryController(
         getExerciseHistoryUseCase: Get.find<GetExerciseHistoryUseCase>(),
         getTotalRepetitionsPerTypeUseCase:
-            Get.find<GetTotalRepetitionsPerxTypeUseCase>(),
+            Get.find<GetTotalRepetitionsPerTypeUseCase>(),
         userId: userId,
       );
     });

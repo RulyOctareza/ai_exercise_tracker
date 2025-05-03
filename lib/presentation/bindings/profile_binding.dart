@@ -1,6 +1,5 @@
-import 'package:ai_exercise_tracker/data/repositories/user_repo_impl.dart';
-import 'package:ai_exercise_tracker/services/firebase_auth_service.dart';
-import 'package:ai_exercise_tracker/services/firebase_firestore_service.dart';
+import 'package:ai_exercise_tracker/presentation/controller/auth_controller.dart';
+import 'package:ai_exercise_tracker/presentation/controller/profile_controller.dart';
 import 'package:get/get.dart';
 
 import '../../domain/usecases/user/get_user_profile_usecase.dart';
@@ -10,28 +9,19 @@ import '../../domain/usecases/user/update_user_profile_usecase.dart';
 class ProfileBinding extends Bindings {
   @override
   void dependencies() {
-    // Repository
-    Get.lazyPut<UserRepositoryImpl>(
-      () => UserRepositoryImpl(
-        authService: Get.find<FirebaseAuthService>(),
-        firestoreService: Get.find<FirebaseFirestoreService>(),
-      ),
-      fenix: true,
-    );
-
-    // Use cases
+    // Use cases - menggunakan repository yang sudah ada
     Get.lazyPut<GetUserProfileUseCase>(
-      () => GetUserProfileUseCase(Get.find<UserRepositoryImpl>()),
+      () => GetUserProfileUseCase(Get.find()),
       fenix: true,
     );
 
     Get.lazyPut<UpdateUserProfileUseCase>(
-      () => UpdateUserProfileUseCase(Get.find<UserRepositoryImpl>()),
+      () => UpdateUserProfileUseCase(Get.find()),
       fenix: true,
     );
 
     Get.lazyPut<UpdatePhysicalDataUseCase>(
-      () => UpdatePhysicalDataUseCase(Get.find<UserRepositoryImpl>()),
+      () => UpdatePhysicalDataUseCase(Get.find()),
       fenix: true,
     );
 

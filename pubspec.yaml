@@ -39,10 +39,17 @@ dependencies:
 
   # Utilities
   intl: ^0.20.2
-  image_gallery_saver: ^2.0.3
   share_plus: ^11.0.0
   screenshot: ^3.0.0
   logger: ^2.0.2+1
+  google_fonts: ^6.2.1
+  google_sign_in: ^6.3.0
+  uuid: ^4.5.1
+  awesome_icons: ^1.1.0
+  table_calendar: ^3.2.0
+  image_picker: ^1.1.2
+  vector_graphics: ^1.1.18
+  connectivity_plus: ^6.1.4
 
 dev_dependencies:
   flutter_test:
@@ -58,4 +65,6 @@ flutter:
   uses-material-design: true
 
   assets:
-    - assets/
+    - assets/images/
+    - assets/animations/
+    - assets/icons/

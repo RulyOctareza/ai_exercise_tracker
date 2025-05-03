@@ -1,50 +1,39 @@
-// lib/presentation/bindings/exercise_binding.dart
-import 'package:ai_exercise_tracker/data/repositories/exercise_repo_impl.dart';
-import 'package:ai_exercise_tracker/domain/usecases/exercise/get_exercises_usecase.dart';
+import 'package:ai_exercise_tracker/domain/repositories/exercise_repository.dart';
 import 'package:ai_exercise_tracker/domain/usecases/exercise/get_last_record_usecase.dart';
 import 'package:ai_exercise_tracker/domain/usecases/exercise/save_exercise_usecase.dart';
 import 'package:ai_exercise_tracker/presentation/controller/auth_controller.dart';
 import 'package:ai_exercise_tracker/presentation/controller/detection_controller.dart';
 import 'package:ai_exercise_tracker/presentation/controller/exercise_list_controller.dart';
-import 'package:ai_exercise_tracker/services/firebase_firestore_service.dart';
+import 'package:ai_exercise_tracker/presentation/controller/exercise_summary_controller.dart';
 import 'package:get/get.dart';
-
+import '../../domain/usecases/exercise/get_exercises_usecase.dart';
 import '../../services/camera_service.dart';
 import '../../services/pose_detection_service.dart';
-
 
 class ExerciseBinding extends Bindings {
   @override
   void dependencies() {
-    // Services
-    Get.lazyPut<CameraService>(() => CameraService().init(), fenix: true);
+    // Camera & Pose Detection Services
+    Get.lazyPut<CameraService>(() => CameraService(), fenix: true);
 
     Get.lazyPut<PoseDetectionService>(
       () => PoseDetectionService(cameraService: Get.find<CameraService>()),
       fenix: true,
     );
 
-    // Repository
-    Get.lazyPut<ExerciseRepositoryImpl>(
-      () => ExerciseRepositoryImpl(
-        firestoreService: Get.find<FirebaseFirestoreService>(),
-      ),
-      fenix: true,
-    );
-
-    // Use cases
+    // Use cases - menggunakan repository yang sudah ada
     Get.lazyPut<GetExercisesUseCase>(
-      () => GetExercisesUseCase(Get.find<ExerciseRepositoryImpl>()),
+      () => GetExercisesUseCase(Get.find<ExerciseRepository>()),
       fenix: true,
     );
 
     Get.lazyPut<GetLastExerciseRecordUseCase>(
-      () => GetLastExerciseRecordUseCase(Get.find<ExerciseRepositoryImpl>()),
+      () => GetLastExerciseRecordUseCase(Get.find()),
       fenix: true,
     );
 
     Get.lazyPut<SaveExerciseHistoryUseCase>(
-      () => SaveExerciseHistoryUseCase(Get.find<ExerciseRepositoryImpl>()),
+      () => SaveExerciseHistoryUseCase(Get.find()),
       fenix: true,
     );
 
@@ -62,6 +51,7 @@ class ExerciseBinding extends Bindings {
 
       return DetectionController(
         poseDetectionService: Get.find<PoseDetectionService>(),
+        cameraService: Get.find<CameraService>(),
         getLastExerciseRecordUseCase: Get.find<GetLastExerciseRecordUseCase>(),
         saveExerciseHistoryUseCase: Get.find<SaveExerciseHistoryUseCase>(),
         userId: userId,

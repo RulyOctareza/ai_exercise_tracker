@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "989068302280",
+    "project_id": "ai-exercise-tracker",
+    "storage_bucket": "ai-exercise-tracker.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:989068302280:android:66a326f497af99ee46d2fd",
+        "android_client_info": {
+          "package_name": "com.example.ai_exercise_tracker"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBKh4ALa8m4jrQ3pG7_S2jBne0NgsWG7eU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
