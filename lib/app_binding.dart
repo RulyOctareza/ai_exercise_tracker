@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:ai_exercise_tracker/data/repositories/auth_repo_impl.dart';
 import 'package:ai_exercise_tracker/data/repositories/exercise_repo_impl.dart';
 import 'package:ai_exercise_tracker/data/repositories/user_repo_impl.dart';
@@ -19,7 +21,7 @@ import 'domain/usecases/auth/get_current_user_usecase.dart';
 class AppBinding extends Bindings {
   @override
   void dependencies() {
-    print("Initializing core services...");
+    log("Initializing core services...");
     // Core services
     Get.put<FirebaseAuthService>(FirebaseAuthService(), permanent: true);
     Get.put<FirebaseFirestoreService>(
@@ -28,7 +30,7 @@ class AppBinding extends Bindings {
     );
     Get.put<SharedPrefsService>(SharedPrefsService(), permanent: true);
 
-    print("Initializing repositories...");
+    log("Initializing repositories...");
     // Repositories
     final authRepo = AuthRepositoryImpl(
       authService: Get.find<FirebaseAuthService>(),
@@ -51,7 +53,7 @@ class AppBinding extends Bindings {
     Get.put<UserRepositoryImpl>(userRepo, permanent: true);
     Get.put<UserRepository>(userRepo, permanent: true);
 
-    print("Initializing use cases...");
+    log("Initializing use cases...");
     // Auth Use Cases
     Get.put<LoginUseCase>(
       LoginUseCase(Get.find<AuthRepository>()),
@@ -83,7 +85,7 @@ class AppBinding extends Bindings {
       permanent: true,
     );
 
-    print("Initializing controllers...");
+    log("Initializing controllers...");
     // Controllers
     Get.put<AuthController>(
       AuthController(
@@ -97,6 +99,6 @@ class AppBinding extends Bindings {
       permanent: true,
     );
 
-    print("AppBinding initialized successfully");
+    log("AppBinding initialized successfully");
   }
 }

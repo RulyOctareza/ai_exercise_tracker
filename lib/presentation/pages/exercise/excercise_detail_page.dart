@@ -3,7 +3,6 @@ import 'package:ai_exercise_tracker/core/utils/app_utils.dart' as app_date_utils
 import 'package:ai_exercise_tracker/presentation/controller/history_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:fl_chart/fl_chart.dart';
 

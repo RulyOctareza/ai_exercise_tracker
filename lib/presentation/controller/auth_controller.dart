@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:get/get.dart';
 import '../../domain/entities/user.dart';
 import '../../domain/usecases/auth/login_usecase.dart';
@@ -55,12 +57,12 @@ class AuthController extends GetxController {
 
         // Use offAll to prevent stacking routes
         await Get.offAllNamed(AppRoutes.HOME);
-        print("Navigation to HOME completed"); // Debugging
+        log("Navigation to HOME completed"); // Debugging
       } else {
         await Get.offAllNamed(AppRoutes.LOGIN);
       }
     } catch (e) {
-      print("Login check error: $e"); // Debugging
+      log("Login check error: $e"); // Debugging
       errorMessage.value = 'Failed to check login status: ${e.toString()}';
       await Get.offAllNamed(AppRoutes.LOGIN);
     } finally {

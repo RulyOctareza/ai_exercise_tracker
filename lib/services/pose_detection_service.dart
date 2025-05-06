@@ -4,7 +4,6 @@ import 'package:camera/camera.dart';
 import 'package:get/get.dart';
 import 'package:google_mlkit_pose_detection/google_mlkit_pose_detection.dart';
 import 'package:flutter/services.dart';
-
 import 'camera_service.dart';
 
 class PoseDetectionService extends GetxService {
@@ -47,6 +46,7 @@ class PoseDetectionService extends GetxService {
     _cameraService.startImageStream(_processImage);
   }
 
+  // Di PoseDetectionService.dart
   Future<void> _processImage(CameraImage image) async {
     try {
       final inputImage = _inputImageFromCameraImage(image);
@@ -57,8 +57,22 @@ class PoseDetectionService extends GetxService {
 
       final List<Pose> poses = await _poseDetector.processImage(inputImage);
 
-      if (poses.isNotEmpty && onPoseDetected != null) {
-        onPoseDetected!(poses.first);
+      // Tambahkan logging untuk memastikan pose terdeteksi
+      print("Poses detected: ${poses.length}");
+      if (poses.isNotEmpty) {
+        // Log contoh landmark untuk diagnosis
+        if (poses.first.landmarks.isNotEmpty) {
+          final firstKey = poses.first.landmarks.keys.first;
+          print(
+            "Sample landmark: $firstKey: ${poses.first.landmarks[firstKey]?.x}, ${poses.first.landmarks[firstKey]?.y}",
+          );
+        }
+
+        if (onPoseDetected != null) {
+          onPoseDetected!(poses.first);
+        } else {
+          print("ERROR: onPoseDetected callback is null!");
+        }
       }
 
       _cameraService.processingDone();
@@ -72,29 +86,42 @@ class PoseDetectionService extends GetxService {
     final camera = _cameraService.cameraController?.description;
     if (camera == null) return null;
 
-    final sensorOrientation = camera.sensorOrientation;
+    // Log untuk diagnosis
+    print(
+      "Creating InputImage from camera image: ${image.width}x${image.height}",
+    );
 
-    InputImageRotation? rotation;
+    // Handling yang lebih baik untuk orientasi
+    final sensorOrientation = camera.sensorOrientation;
+    print("Sensor orientation: $sensorOrientation");
+
+    InputImageRotation rotation;
     if (Platform.isIOS) {
-      rotation = InputImageRotationValue.fromRawValue(sensorOrientation);
-    } else if (Platform.isAndroid) {
-      var rotationCompensation = 0;
-      // Handle Android rotation based on device orientation
-      // This is a simplified version - in a real app, you would get the actual device orientation
-      rotation = InputImageRotationValue.fromRawValue(
-        (sensorOrientation + rotationCompensation) % 360,
-      );
+      // iOS membutuhkan penanganan khusus
+      rotation =
+          InputImageRotationValue.fromRawValue(sensorOrientation) ??
+          InputImageRotation.rotation0deg;
+    } else {
+      // Pada Android, perlu menangani orientasi berbeda
+      int rotationCompensation = 0;
+      // Di implementasi lengkap, dapatkan orientasi dari DeviceOrientation
+      rotation =
+          InputImageRotationValue.fromRawValue(
+            (sensorOrientation + rotationCompensation) % 360,
+          ) ??
+          InputImageRotation.rotation0deg;
     }
 
-    if (rotation == null) return null;
-
-    // Format will depend on platform
+    // Handling yang lebih baik untuk format
     final format =
         Platform.isAndroid ? InputImageFormat.nv21 : InputImageFormat.bgra8888;
 
-    if (image.planes.length != (Platform.isAndroid ? 3 : 1)) return null;
+    // Pastikan plane data tersedia
+    if (image.planes.isEmpty) {
+      print("ERROR: Image planes are empty!");
+      return null;
+    }
 
-    // Setup plane data based on platform
     final plane = image.planes.first;
 
     return InputImage.fromBytes(

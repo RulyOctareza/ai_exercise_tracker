@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import '../../domain/entities/exercise.dart';
 import '../theme/text_styles.dart';
 

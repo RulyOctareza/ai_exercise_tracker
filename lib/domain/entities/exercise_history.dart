@@ -1,4 +1,4 @@
-// lib/domain/entities/exercise_history.dart
+
 import 'exercise.dart';
 
 class ExerciseHistory {

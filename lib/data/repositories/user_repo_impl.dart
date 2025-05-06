@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:ai_exercise_tracker/services/firebase_auth_service.dart';
 import 'package:ai_exercise_tracker/services/firebase_firestore_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -26,7 +28,7 @@ class UserRepositoryImpl implements UserRepository {
       }
       return null;
     } catch (e) {
-      print('Error getting user by ID: $e');
+      log('Error getting user by ID: $e');
       return null;
     }
   }

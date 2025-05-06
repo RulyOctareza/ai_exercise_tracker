@@ -8,8 +8,7 @@ class LoadingWidget extends StatelessWidget {
   final String? message;
   final bool useAnimation;
 
-  const LoadingWidget({Key? key, this.message, this.useAnimation = true})
-    : super(key: key);
+  const LoadingWidget({super.key, this.message, this.useAnimation = true});
 
   @override
   Widget build(BuildContext context) {

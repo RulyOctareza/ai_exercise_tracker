@@ -1,13 +1,13 @@
+import 'dart:developer';
+
 import 'package:ai_exercise_tracker/services/firebase_auth_service.dart';
 import 'package:ai_exercise_tracker/services/firebase_firestore_service.dart';
 import 'package:ai_exercise_tracker/services/shared_pref_service.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 
-
 import '../../domain/entities/user.dart' as app_entity;
 import '../../domain/repositories/auth_repository.dart';
 import '../models/user_model.dart';
-
 
 class AuthRepositoryImpl implements AuthRepository {
   final FirebaseAuthService _authService;
@@ -27,6 +27,8 @@ class AuthRepositoryImpl implements AuthRepository {
     final firebaseUser = _authService.currentUser;
     if (firebaseUser == null) return null;
 
+    log('Attempting to get user document with UID: ${firebaseUser.uid}');
+
     try {
       final userDoc =
           await _firestoreService.userDocument(firebaseUser.uid).get();
@@ -44,7 +46,7 @@ class AuthRepositoryImpl implements AuthRepository {
         );
       }
     } catch (e) {
-      print('Error getting current user: $e');
+      log('Error getting current user: $e');
       return null;
     }
   }
@@ -203,10 +205,8 @@ class AuthRepositoryImpl implements AuthRepository {
         return newUser;
       }
     } catch (e) {
-      print('Error getting user data: $e');
+      log('Error getting user data: $e');
       throw Exception('Failed to get user data from Firestore');
     }
   }
-
-
 }

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:ai_exercise_tracker/core/constants/firebase_constant.dart';
 import 'package:ai_exercise_tracker/core/utils/app_utils.dart';
 import 'package:ai_exercise_tracker/services/firebase_firestore_service.dart';
@@ -70,7 +72,7 @@ class ExerciseRepositoryImpl implements ExerciseRepository {
         ),
       ];
     } catch (e) {
-      print('Error getting exercises: $e');
+      log('Error getting exercises: $e');
       return [];
     }
   }
@@ -81,7 +83,7 @@ class ExerciseRepositoryImpl implements ExerciseRepository {
       final exercises = await getExercises();
       return exercises.firstWhere((exercise) => exercise.id == exerciseId);
     } catch (e) {
-      print('Error getting exercise by ID: $e');
+      log('Error getting exercise by ID: $e');
       return null;
     }
   }
@@ -92,7 +94,7 @@ class ExerciseRepositoryImpl implements ExerciseRepository {
       final exercises = await getExercises();
       return exercises.firstWhere((exercise) => exercise.type == type);
     } catch (e) {
-      print('Error getting exercise by type: $e');
+      log('Error getting exercise by type: $e');
       return null;
     }
   }
@@ -158,7 +160,7 @@ class ExerciseRepositoryImpl implements ExerciseRepository {
 
       return histories;
     } catch (e) {
-      print('Error getting exercise history: $e');
+      log('Error getting exercise history: $e');
       return [];
     }
   }
@@ -189,7 +191,7 @@ class ExerciseRepositoryImpl implements ExerciseRepository {
         snapshot.docs.first.data() as Map<String, dynamic>,
       );
     } catch (e) {
-      print('Error getting last exercise record: $e');
+      log('Error getting last exercise record: $e');
       return null;
     }
   }
@@ -220,7 +222,7 @@ class ExerciseRepositoryImpl implements ExerciseRepository {
         snapshot.docs.first.data() as Map<String, dynamic>,
       );
     } catch (e) {
-      print('Error getting best exercise record: $e');
+      log('Error getting best exercise record: $e');
       return null;
     }
   }
@@ -248,7 +250,7 @@ class ExerciseRepositoryImpl implements ExerciseRepository {
 
       return totals;
     } catch (e) {
-      print('Error getting total repetitions: $e');
+      log('Error getting total repetitions: $e');
       return {};
     }
   }
@@ -279,7 +281,7 @@ class ExerciseRepositoryImpl implements ExerciseRepository {
 
       return result;
     } catch (e) {
-      print('Error getting exercise history by date: $e');
+      log('Error getting exercise history by date: $e');
       return {};
     }
   }

@@ -87,7 +87,6 @@ class DetectionController extends GetxController {
     if (exercise.value == null) return;
 
     final landmarks = pose.landmarks;
-    bool countIncremented = false;
 
     switch (exercise.value!.type) {
       case ExerciseType.pushUps:
@@ -97,7 +96,6 @@ class DetectionController extends GetxController {
         )) {
           incrementCount();
           isLowered.value = false;
-          countIncremented = true;
         } else if (!isLowered.value &&
             landmarks[PoseLandmarkType.leftElbow] != null) {
           // Update lowered state without incrementing count
@@ -133,7 +131,6 @@ class DetectionController extends GetxController {
         )) {
           incrementCount();
           isSquatting.value = false;
-          countIncremented = true;
         } else if (!isSquatting.value &&
             landmarks[PoseLandmarkType.leftKnee] != null) {
           // Update squatting state
@@ -165,7 +162,6 @@ class DetectionController extends GetxController {
         )) {
           incrementCount();
           isInDownwardDog.value = false;
-          countIncremented = true;
         } else if (!isInDownwardDog.value) {
           // Update downward dog state
           final landmarks = pose.landmarks;
@@ -196,7 +192,6 @@ class DetectionController extends GetxController {
         )) {
           incrementCount();
           isJumpingJackOpen.value = false;
-          countIncremented = true;
         } else if (!isJumpingJackOpen.value) {
           // Update jumping jack state
           final landmarks = pose.landmarks;
@@ -229,7 +224,6 @@ class DetectionController extends GetxController {
           incrementCount();
           handsTogether.value = true;
           lastClapTime.value = DateTime.now();
-          countIncremented = true;
         } else if (handsTogether.value) {
           // Reset handsTogether when wrists move apart
           final leftWrist = landmarks[PoseLandmarkType.leftWrist];

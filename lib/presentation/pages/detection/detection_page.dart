@@ -1,7 +1,6 @@
 import 'package:ai_exercise_tracker/presentation/controller/detection_controller.dart';
 import 'package:ai_exercise_tracker/presentation/pages/exercise/widgets/pose_painter.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:camera/camera.dart';
 
@@ -9,16 +8,83 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/text_styles.dart';
 import '../../../core/widgets/custom_button.dart';
 
-class DetectionPage extends StatelessWidget {
+class DetectionPage extends StatefulWidget {
   const DetectionPage({super.key});
 
   @override
+  State<DetectionPage> createState() => _DetectionPageState();
+}
+
+class _DetectionPageState extends State<DetectionPage>
+    with WidgetsBindingObserver {
+  late DetectionController controller;
+  CameraController? cameraController;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    controller = Get.find<DetectionController>();
+
+    // Reinitialize camera each time page opens
+    _initializeCamera();
+
+    // Also listen for changes to the camera controller
+    ever(controller.camera.isInitialized, (_) {
+      if (mounted) {
+        setState(() {
+          cameraController = controller.camera.cameraController;
+        });
+      }
+    });
+  }
+
+  Future<void> _initializeCamera() async {
+    // Re-initialize camera service to fix issues when reopening page
+    await controller.camera.init();
+
+    // Update local controller reference
+    if (mounted && controller.camera.cameraController != null) {
+      setState(() {
+        cameraController = controller.camera.cameraController;
+        print(
+          "Camera controller updated: ${cameraController?.value.isInitialized}",
+        );
+      });
+    }
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    // Handle app lifecycle changes to properly manage camera resource
+    final CameraController? ctlr = cameraController;
+
+    if (ctlr == null || !ctlr.value.isInitialized) return;
+
+    if (state == AppLifecycleState.inactive) {
+      // Free up resources when app is inactive
+      ctlr.dispose();
+    } else if (state == AppLifecycleState.resumed) {
+      // Reinitialize when app resumes
+      _initializeCamera();
+    }
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    // We don't dispose the camera here as it's managed by the service
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final controller = Get.find<DetectionController>();
     final size = MediaQuery.of(context).size;
 
-    return WillPopScope(
-      onWillPop: () async {
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (didPop) async {
+        if (didPop) return;
         // Confirm before exiting
         final result = await showDialog<bool>(
           context: context,
@@ -40,48 +106,62 @@ class DetectionPage extends StatelessWidget {
                 ],
               ),
         );
-        return result ?? false;
+
+        if (result == true) {
+          Get.back();
+        }
       },
       child: Scaffold(
         backgroundColor: Colors.black,
         body: Stack(
           children: [
-            // Camera preview with pose detection overlay
-            Obx(() {
-              final cameraController = controller.camera.cameraController;
+            // Camera preview
+            if (cameraController != null &&
+                cameraController!.value.isInitialized)
+              Positioned.fill(
+                child: Transform.scale(
+                  scale: 1.0,
+                  child: Center(
+                    child: AspectRatio(
+                      aspectRatio: cameraController!.value.aspectRatio,
+                      child: CameraPreview(cameraController!),
+                    ),
+                  ),
+                ),
+              )
+            else
+              const Center(
+                child: CircularProgressIndicator(color: AppColors.purple),
+              ),
 
-              if (cameraController == null ||
-                  !cameraController.value.isInitialized) {
-                return const Center(
-                  child: CircularProgressIndicator(color: AppColors.purple),
-                );
+            // Pose Detection Overlay - adjusted to match camera preview size/position
+            Obx(() {
+              if (controller.poses.isEmpty ||
+                  cameraController == null ||
+                  !cameraController!.value.isInitialized ||
+                  cameraController!.value.previewSize == null) {
+                return Container();
               }
 
-              return SizedBox(
-                width: size.width,
-                height: size.height,
-                child: AspectRatio(
-                  aspectRatio: cameraController.value.aspectRatio,
-                  child: Stack(
-                    fit: StackFit.expand,
-                    children: [
-                      CameraPreview(cameraController),
-                      Obx(() {
-                        if (controller.poses.isNotEmpty) {
-                          return CustomPaint(
-                            painter: PosePainter(
-                              poses: controller.poses,
-                              imageSize: Size(
-                                cameraController.value.previewSize!.height,
-                                cameraController.value.previewSize!.width,
-                              ),
-                            ),
-                          );
-                        } else {
-                          return Container();
-                        }
-                      }),
-                    ],
+              // Use positioned.fill to match the camera preview exactly
+              return Positioned.fill(
+                child: Center(
+                  child: AspectRatio(
+                    aspectRatio: cameraController!.value.aspectRatio,
+                    child: CustomPaint(
+                      // Using the same size as camera preview
+                      size: Size(
+                        cameraController!.value.previewSize!.width.toDouble(),
+                        cameraController!.value.previewSize!.height.toDouble(),
+                      ),
+                      painter: PosePainter(
+                        poses: controller.poses,
+                        imageSize: Size(
+                          cameraController!.value.previewSize!.height,
+                          cameraController!.value.previewSize!.width,
+                        ),
+                      ),
+                    ),
                   ),
                 ),
               );
@@ -170,7 +250,7 @@ class DetectionPage extends StatelessWidget {
 
             // Finish button at top right
             Positioned(
-              top: 50,
+              top: 120,
               right: 20,
               child: FloatingActionButton.small(
                 heroTag: 'finishButton',

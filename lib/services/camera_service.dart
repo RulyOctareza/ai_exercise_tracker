@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:camera/camera.dart';
 import 'package:get/get.dart';
 
@@ -30,7 +32,7 @@ class CameraService extends GetxService {
       isInitialized.value = true;
       return this;
     } on CameraException catch (e) {
-      print('Error initializing camera: ${e.code}, ${e.description}');
+      log('Error initializing camera: ${e.code}, ${e.description}');
       return this;
     }
   }
@@ -50,7 +52,7 @@ class CameraService extends GetxService {
     try {
       await _cameraController!.initialize();
     } on CameraException catch (e) {
-      print(
+      log(
         'Error initializing camera controller: ${e.code}, ${e.description}',
       );
       rethrow;
@@ -76,7 +78,7 @@ class CameraService extends GetxService {
         }
       });
     } on CameraException catch (e) {
-      print('Error starting image stream: ${e.code}, ${e.description}');
+      log('Error starting image stream: ${e.code}, ${e.description}');
     }
   }
 
@@ -93,7 +95,7 @@ class CameraService extends GetxService {
     try {
       await _cameraController!.stopImageStream();
     } on CameraException catch (e) {
-      print('Error stopping image stream: ${e.code}, ${e.description}');
+      log('Error stopping image stream: ${e.code}, ${e.description}');
     }
   }
 
