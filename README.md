@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/preview/hero.png" alt="AI Exercise Tracker — ilustrasi aplikasi latihan berbasis pose detection" width="100%">
+  <img src="docs/preview/hero.svg" alt="AI Exercise Tracker — ilustrasi aplikasi latihan berbasis pose detection" width="100%">
 </p>
 
 <h1 align="center">AI Exercise Tracker</h1>
